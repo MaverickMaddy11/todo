@@ -1,0 +1,119 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+
+</head>
+
+<script>
+    async function signup(){
+        const username = document.getElementById("upname").value;
+        const password = document.getElementById("uppass").value;
+
+        await axios.post("http://localhost:3000/signup",{
+            username : username , 
+            password : password 
+        })
+
+        const divi = document.createElement("div");
+        divi.innerHTML = "you have SINGED UP ";
+        document.getElementById("messagebox").append(divi);
+        
+    }
+
+    async function signin(){
+        const username = document.getElementById("inname").value; 
+        const password = document.getElementById("inpass").value; 
+
+        try{
+            const response = await axios.post("http://localhost:3000/signin",{
+            username : username, 
+            password : password
+            })
+            localStorage.setItem("token",response.data.token)
+            const but = document.createElement("button");
+            but.innerHTML = "GET TODO";
+            but.setAttribute("id","todobut");
+            but.onclick = move;
+            document.getElementById("messagebox").append(but);
+        }
+        catch{
+            alert("there is an erro is sign in ")
+            console.log("there is some prblem ");
+        }
+    }
+
+    async function move() {
+    const token = localStorage.getItem("token");
+    console.log("Token retrieved from localStorage:", token);  // Log token to confirm
+
+    if (!token) {
+        console.log("No token found, cannot proceed.");
+        return;
+    }
+
+    try {
+        const response = await axios.get("http://localhost:3000/todo", {
+            headers: {
+                Authorization: `Bearer ${token}`  // Ensure token is in the Authorization header
+            }
+        });
+        console.log("Response received from /todo:", response);  // Log the response
+        window.location.href = "/todo";
+    } catch (error) {
+        console.log("Error in move function:", error);
+    }
+}
+async function move() {
+    const token = localStorage.getItem("token");
+    console.log("Token retrieved from localStorage:", token);  // Log token to confirm
+
+    if (!token) {
+        console.log("No token found, cannot proceed.");
+        return;
+    }
+
+    try {
+        const response = await axios.get("http://localhost:3000/todo", {
+            headers: {
+                Authorization: `Bearer ${token}`  // Ensure token is in the Authorization header
+            }
+        });
+        console.log("Response received from /todo:", response);  // Log the response
+        window.location.href = "/todo";
+    } catch (error) {
+        console.log("Error in move function:", error);
+    }
+}
+
+
+</script>
+
+
+<body>
+    <div>TODO </div>
+
+    <div>
+        signup
+        <input id="upname" type = "text" name = "username" placeholder="username">
+        <input id="uppass" type = "text" name = "password" placeholder="password">
+        <button onclick= "signup()">SUBMIT</button>
+    </div>
+    
+    <div>
+        signin
+        <input id="inname" type = "text" name = "username" placeholder="username">
+        <input id="inpass" type = "text" name = "password" placeholder="password">
+        <button onclick="signin()">SUBMIT</button>
+    </div>
+
+    <div>
+        message box 
+        <div id = "messagebox"></div>
+    </div>
+    
+</body>
+
+</html>
